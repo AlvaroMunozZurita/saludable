@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MealPlanner Pro - Tu planificador semanal de comidas</title>
+  
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style id="app-style">
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .category-btn {
+      transition: all 0.3s ease;
+    }
+    
+    .category-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .category-btn.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .recipe-card {
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .recipe-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .badge {
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    
+    .tab {
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .tab.active:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+    }
+    
+    .floating-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 99;
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .expiry-item {
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+    }
+    
+    .expiry-item:hover {
+      transform: translateX(5px);
+    }
+    
+    .expiry-urgent {
+      border-color: #ef4444;
+    }
+    
+    .expiry-warning {
+      border-color: #f59e0b;
+    }
+    
+    .expiry-ok {
+      border-color: #10b981;
+    }
+    
+    /* Mobile Bottom Navigation */
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+    
+    @media (min-width: 768px) {
+      .mobile-nav {
+        display: none;
+      }
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+    }
+    
+    /* Skeleton loading */
+    .skeleton {
+      animation: skeleton-loading 1s linear infinite alternate;
+    }
+    
+    @keyframes skeleton-loading {
+      0% {
+        background-color: #e2e8f0;
+      }
+      100% {
+        background-color: #f1f5f9;
+      }
+    }
+    
+    /* Custom checkboxes */
+    .custom-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      display: inline-block;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .custom-checkbox.checked {
+      background-color: #4CAF50;
+      border-color: #4CAF50;
+    }
+    
+    .custom-checkbox.checked:after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+    }
+    
+    /* Basket transitions */
+    .basket-item {
+      opacity: 1;
+    }
+    
+    .fade-out {
+      opacity: 0;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="hidden fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col items-center justify-center">
+    <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+    <p class="mt-4 text-gray-700 font-medium">Cargando...</p>
+  </div>
+  
+  <!-- Error Message Toast -->
+  <div id="error-toast" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+    <div class="flex items-center">
+      <i class="fas fa-exclamation-circle mr-2"></i>
+      <span id="error-message">Ha ocurrido un error</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <i class="fas fa-utensils text-green-500 text-2xl mr-2"></i>
+        <h1 class="text-xl font-bold text-gray-800">MealPlanner Pro</h1>
+      </div>
+      <div class="hidden md:block">
+        <nav class="flex space-x-8">
+          <a href="javascript:void(0)" class="tab active text-gray-800 font-medium" data-tab="canasta">Canasta</a>
+          <a href="javascript:void(0)" class="tab text-gray-500" data-tab="plan">Plan Semanal</a>
+          <a href="javascript:void(0)" class="tab text-gray-500" data-tab="caducidad">Caducidad</a>
+          <a href="javascript:void(0)" class="tab text-gray-500" data-tab="estadisticas">Estadísticas</a>
+        </nav>
+      </div>
+      <button class="md:hidden text-gray-700">
+        <i class="fas fa-user-circle text-xl"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6 pb-24">
+    <!-- Canasta Tab -->
+    <section id="canasta-tab" class="block">
+      <div class="mb-6">
+        <div class="relative">
+          <input type="text" placeholder="Buscar canasta de alimentos..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
+
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold text-gray-800 mb-3">Categorías populares</h2>
+        <div class="flex flex-wrap gap-2">
+          <button class="category-btn active bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium" data-category="todas">Todas</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="vegetariana">Vegetariana</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="economica">Económica</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="alta-proteinas">Alta en proteínas</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="baja-carbohidratos">Baja en carbohidratos</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="mediterranea">Mediterránea</button>
+        </div>
+      </div>
+
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Canasta seleccionada</h2>
+        
+        <!-- Add no-results message (initially hidden) -->
+        <p id="no-results-message" class="hidden text-gray-600 py-4 text-center bg-gray-50 rounded-xl">No hay recetas disponibles en esta categoría por ahora.</p>
+        
+        <!-- Wrap basket items in container -->
+        <div id="basket-container">
+          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300" data-category="vegetariana">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Vegetariana</h3>
+            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Espinaca (200g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Tomates (4 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Brócoli (1 unidad)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Zanahorias (6 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Garbanzos (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Lentejas (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Queso tofu (250g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Cebolla (2 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pimientos (3 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Arroz integral (1kg)</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-end">
+              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                Generar plan semanal
+              </button>
+            </div>
+          </div>
+          
+          <!-- Additional basket items with different categories (initially hidden) -->
+          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="economica">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Económica</h3>
+            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Arroz (1kg)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Patatas (1kg)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Zanahorias (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Cebollas (500g)</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-end">
+              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                Generar plan semanal
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="alta-proteinas">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Alta en Proteínas</h3>
+            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pollo (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Huevos (12 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Queso cottage (250g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Lentejas (500g)</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-end">
+              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                Generar plan semanal
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="baja-carbohidratos">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Baja en Carbohidratos</h3>
+            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Aguacate (3 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pollo (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Huevos (12 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Espinacas (200g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Brócoli (1 unidad)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Calabacín (2 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Queso (250g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Salmón (400g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Almendras (200g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Aceite de oliva (500ml)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Tomates cherry (250g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pepino (2 unidades)</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-end">
+              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                Generar plan semanal
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="mediterranea">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Mediterránea</h3>
+            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+            
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Aceite de oliva (500ml)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Tomates (6 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pepino (2 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Queso feta (200g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Aceitunas negras (100g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Cebolla roja (2 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pimientos (3 unidades)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pan integral (1 barra)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pescado blanco (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Nueces (200g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Garbanzos (500g)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Limones (4 unidades)</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-end">
+              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                Generar plan semanal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Plan Semanal Tab -->
+    <section id="plan-tab" class="hidden">
+      <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Tu Plan Semanal</h2>
+        <p class="text-gray-600">Basado en los ingredientes seleccionados</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Monday -->
+        <div class="recipe-card bg-white shadow-md overflow-hidden">
+          <div class="p-4 bg-green-50">
+            <h3 class="font-semibold text-gray-700">Lunes</h3>
+          </div>
+          <div class="p-5">
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Ensalada de garbanzos y espinaca</h4>
+            <div class="mb-3">
+              <span class="badge bg-green-100 text-green-800">420 kcal</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Ingredientes utilizados:</p>
+            <ul class="text-sm text-gray-600 mb-4 space-y-1">
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Garbanzos</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Espinaca</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Tomates</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Cebolla</span>
+              </li>
+            </ul>
+            
+            <div class="border-t border-gray-100 pt-3 mb-3">
+              <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
+              <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="bg-blue-50 rounded p-2 text-center">
+                  <p class="text-blue-800 font-semibold">15g</p>
+                  <p class="text-gray-500">Proteínas</p>
+                </div>
+                <div class="bg-yellow-50 rounded p-2 text-center">
+                  <p class="text-yellow-800 font-semibold">45g</p>
+                  <p class="text-gray-500">Carbos</p>
+                </div>
+                <div class="bg-red-50 rounded p-2 text-center">
+                  <p class="text-red-800 font-semibold">12g</p>
+                  <p class="text-gray-500">Grasas</p>
+                </div>
+                <div class="bg-green-50 rounded p-2 text-center">
+                  <p class="text-green-800 font-semibold">8g</p>
+                  <p class="text-gray-500">Fibra</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600">
+              <i class="fas fa-heart text-red-500 mr-1"></i>
+              <span>Rico en hierro y fibra para mejor digestión</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tuesday -->
+        <div class="recipe-card bg-white shadow-md overflow-hidden">
+          <div class="p-4 bg-green-50">
+            <h3 class="font-semibold text-gray-700">Martes</h3>
+          </div>
+          <div class="p-5">
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Curry de lentejas</h4>
+            <div class="mb-3">
+              <span class="badge bg-green-100 text-green-800">380 kcal</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Ingredientes utilizados:</p>
+            <ul class="text-sm text-gray-600 mb-4 space-y-1">
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Lentejas</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Zanahorias</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Cebolla</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Arroz integral</span>
+              </li>
+            </ul>
+            
+            <div class="border-t border-gray-100 pt-3 mb-3">
+              <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
+              <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="bg-blue-50 rounded p-2 text-center">
+                  <p class="text-blue-800 font-semibold">18g</p>
+                  <p class="text-gray-500">Proteínas</p>
+                </div>
+                <div class="bg-yellow-50 rounded p-2 text-center">
+                  <p class="text-yellow-800 font-semibold">52g</p>
+                  <p class="text-gray-500">Carbos</p>
+                </div>
+                <div class="bg-red-50 rounded p-2 text-center">
+                  <p class="text-red-800 font-semibold">6g</p>
+                  <p class="text-gray-500">Grasas</p>
+                </div>
+                <div class="bg-green-50 rounded p-2 text-center">
+                  <p class="text-green-800 font-semibold">11g</p>
+                  <p class="text-gray-500">Fibra</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600">
+              <i class="fas fa-heart text-red-500 mr-1"></i>
+              <span>Alto contenido en proteína vegetal y fibra</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Wednesday -->
+        <div class="recipe-card bg-white shadow-md overflow-hidden">
+          <div class="p-4 bg-green-50">
+            <h3 class="font-semibold text-gray-700">Miércoles</h3>
+          </div>
+          <div class="p-5">
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Bowl de Tofu y Brócoli</h4>
+            <div class="mb-3">
+              <span class="badge bg-green-100 text-green-800">410 kcal</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Ingredientes utilizados:</p>
+            <ul class="text-sm text-gray-600 mb-4 space-y-1">
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Tofu</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Brócoli</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Pimientos</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                <span>Arroz integral</span>
+              </li>
+            </ul>
+            
+            <div class="border-t border-gray-100 pt-3 mb-3">
+              <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
+              <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="bg-blue-50 rounded p-2 text-center">
+                  <p class="text-blue-800 font-semibold">22g</p>
+                  <p class="text-gray-500">Proteínas</p>
+                </div>
+                <div class="bg-yellow-50 rounded p-2 text-center">
+                  <p class="text-yellow-800 font-semibold">48g</p>
+                  <p class="text-gray-500">Carbos</p>
+                </div>
+                <div class="bg-red-50 rounded p-2 text-center">
+                  <p class="text-red-800 font-semibold">9g</p>
+                  <p class="text-gray-500">Grasas</p>
+                </div>
+                <div class="bg-green-50 rounded p-2 text-center">
+                  <p class="text-green-800 font-semibold">7g</p>
+                  <p class="text-gray-500">Fibra</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600">
+              <i class="fas fa-heart text-red-500 mr-1"></i>
+              <span>Rico en calcio y vitamina C</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rest of the days would follow the same pattern -->
+        <div class="recipe-card bg-white shadow-md overflow-hidden">
+          <div class="p-4 bg-green-50">
+            <h3 class="font-semibold text-gray-700">Jueves</h3>
+          </div>
+          <div class="p-5 flex items-center justify-center h-48">
+            <button class="text-green-600 hover:text-green-800 font-medium">
+              <i class="fas fa-plus-circle mr-2"></i>
+              Ver más días
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Caducidad Tab -->
+    <section id="caducidad-tab" class="hidden">
+      <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Control de Caducidad</h2>
+        <p class="text-gray-600">Alimentos próximos a vencer y sugerencias de uso</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+        <div class="p-5">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Alimentos próximos a vencer</h3>
+          
+          <div class="space-y-3">
+            <div class="expiry-item expiry-urgent p-3 pl-4 bg-red-50 rounded">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h4 class="font-medium text-gray-800">Espinacas</h4>
+                  <p class="text-sm text-gray-600">Vence en 1 día</p>
+                </div>
+                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                  Ver recetas
+                </button>
+              </div>
+            </div>
+            
+            <div class="expiry-item expiry-warning p-3 pl-4 bg-yellow-50 rounded">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h4 class="font-medium text-gray-800">Tomates</h4>
+                  <p class="text-sm text-gray-600">Vence en 3 días</p>
+                </div>
+                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                  Ver recetas
+                </button>
+              </div>
+            </div>
+            
+            <div class="expiry-item expiry-warning p-3 pl-4 bg-yellow-50 rounded">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h4 class="font-medium text-gray-800">Brócoli</h4>
+                  <p class="text-sm text-gray-600">Vence en 4 días</p>
+                </div>
+                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                  Ver recetas
+                </button>
+              </div>
+            </div>
+            
+            <div class="expiry-item expiry-ok p-3 pl-4 bg-green-50 rounded">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h4 class="font-medium text-gray-800">Lentejas</h4>
+                  <p class="text-sm text-gray-600">Vence en 14 días</p>
+                </div>
+                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                  Ver recetas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-5">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Sugerencias rápidas de uso</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="font-medium text-gray-800 mb-2">Batido Verde Energético</h4>
+              <p class="text-sm text-gray-600 mb-3">Usa tus espinacas antes de que caduquen</p>
+              <div class="flex items-center text-sm text-gray-500">
+                <i class="fas fa-clock mr-2"></i>
+                <span>5 minutos de preparación</span>
+              </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="font-medium text-gray-800 mb-2">Salsa de Tomate Casera</h4>
+              <p class="text-sm text-gray-600 mb-3">Aprovecha tus tomates maduros</p>
+              <div class="flex items-center text-sm text-gray-500">
+                <i class="fas fa-clock mr-2"></i>
+                <span>20 minutos de preparación</span>
+              </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="font-medium text-gray-800 mb-2">Puré de Brócoli</h4>
+              <p class="text-sm text-gray-600 mb-3">Sopa cremosa con tu brócoli</p>
+              <div class="flex items-center text-sm text-gray-500">
+                <i class="fas fa-clock mr-2"></i>
+                <span>15 minutos de preparación</span>
+              </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="font-medium text-gray-800 mb-2">Crema de Vegetales</h4>
+              <p class="text-sm text-gray-600 mb-3">Combina todos tus vegetales cercanos a vencer</p>
+              <div class="flex items-center text-sm text-gray-500">
+                <i class="fas fa-clock mr-2"></i>
+                <span>30 minutos de preparación</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estadísticas Tab -->
+    <section id="estadisticas-tab" class="hidden">
+      <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Estadísticas Nutricionales</h2>
+        <p class="text-gray-600">Análisis de tu plan de comidas semanal</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-5">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Calorías Diarias</h3>
+            <div class="h-64">
+              <canvas id="caloriesChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-5">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Macronutrientes Promedio</h3>
+            <div class="h-64">
+              <canvas id="macrosChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md overflow-hidden lg:col-span-2">
+          <div class="p-5">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Balance Nutricional Semanal</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="border border-gray-200 rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-green-500 mb-1">93%</div>
+                <p class="text-sm text-gray-600">Cobertura de nutrientes esenciales</p>
+              </div>
+              <div class="border border-gray-200 rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-blue-500 mb-1">87%</div>
+                <p class="text-sm text-gray-600">Balance proteína/carbohidratos</p>
+              </div>
+              <div class="border border-gray-200 rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-purple-500 mb-1">96%</div>
+                <p class="text-sm text-gray-600">Variedad de alimentos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav bg-white py-3 px-6 grid grid-cols-4">
+    <a href="javascript:void(0)" class="flex flex-col items-center text-green-500" data-tab="canasta">
+      <i class="fas fa-shopping-basket text-xl"></i>
+      <span class="text-xs mt-1">Canasta</span>
+    </a>
+    <a href="javascript:void(0)" class="flex flex-col items-center text-gray-400" data-tab="plan">
+      <i class="fas fa-calendar-alt text-xl"></i>
+      <span class="text-xs mt-1">Plan</span>
+    </a>
+    <a href="javascript:void(0)" class="flex flex-col items-center text-gray-400" data-tab="caducidad">
+      <i class="fas fa-clock text-xl"></i>
+      <span class="text-xs mt-1">Caducidad</span>
+    </a>
+    <a href="javascript:void(0)" class="flex flex-col items-center text-gray-400" data-tab="estadisticas">
+      <i class="fas fa-chart-bar text-xl"></i>
+      <span class="text-xs mt-1">Stats</span>
+    </a>
+  </nav>
+
+  <!-- Floating Action Buttons -->
+  <button class="floating-btn bg-green-500 hover:bg-green-600 text-white w-14 h-14 flex items-center justify-center transition-colors">
+    <i class="fas fa-list-ul text-xl"></i>
+  </button>
+
+  <script id="app-script">
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab Navigation
+      const tabs = document.querySelectorAll('[data-tab]');
+      const tabContents = document.querySelectorAll('section[id$="-tab"]');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.getAttribute('data-tab');
+          
+          // Hide all tab contents
+          tabContents.forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          // Show the selected tab content
+          document.getElementById(`${target}-tab`).classList.remove('hidden');
+          
+          // Update active state on tabs
+          tabs.forEach(t => {
+            if (t.getAttribute('data-tab') === target) {
+              t.classList.add('active');
+              if (t.classList.contains('text-gray-500')) {
+                t.classList.remove('text-gray-500');
+                t.classList.add('text-gray-800');
+              }
+              if (t.classList.contains('text-gray-400')) {
+                t.classList.remove('text-gray-400');
+                t.classList.add('text-green-500');
+              }
+            } else {
+              t.classList.remove('active');
+              if (t.classList.contains('text-gray-800') && !t.classList.contains('tab')) {
+                t.classList.remove('text-gray-800');
+                t.classList.add('text-gray-500');
+              }
+              if (t.classList.contains('text-green-500') && !t.classList.contains('tab')) {
+                t.classList.remove('text-green-500');
+                t.classList.add('text-gray-400');
+              }
+            }
+          });
+        });
+      });
+      
+      // Category buttons with filtering functionality
+      const categoryButtons = document.querySelectorAll('.category-btn');
+      const basketItems = document.querySelectorAll('.basket-item');
+      const noResultsMessage = document.getElementById('no-results-message');
+      
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Update button styles
+          categoryButtons.forEach(btn => {
+            btn.classList.remove('active', 'bg-green-500', 'text-white');
+            btn.classList.add('bg-gray-100', 'text-gray-700');
+          });
+          
+          button.classList.add('active', 'bg-green-500', 'text-white');
+          button.classList.remove('bg-gray-100', 'text-gray-700');
+          
+          // Get selected category
+          const category = button.getAttribute('data-category');
+          
+          // Filter baskets
+          let hasVisibleItems = false;
+          
+          // Apply fade-out effect to all items
+          basketItems.forEach(item => {
+            item.classList.add('fade-out');
+          });
+          
+          // After short delay, update visibility and apply fade-in
+          setTimeout(() => {
+            basketItems.forEach(item => {
+              if (category === 'todas' || item.getAttribute('data-category') === category) {
+                item.classList.remove('hidden', 'fade-out');
+                item.classList.add('fade-in');
+                hasVisibleItems = true;
+              } else {
+                item.classList.add('hidden');
+                item.classList.remove('fade-in');
+              }
+            });
+            
+            // Show/hide no results message
+            if (hasVisibleItems) {
+              noResultsMessage.classList.add('hidden');
+            } else {
+              noResultsMessage.classList.remove('hidden');
+            }
+          }, 300); // Slight delay for animation
+        });
+      });
+      
+      // Custom checkboxes
+      const checkboxes = document.querySelectorAll('.custom-checkbox');
+      
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', () => {
+          const isChecked = checkbox.getAttribute('data-checked') === 'true';
+          
+          checkbox.setAttribute('data-checked', isChecked ? 'false' : 'true');
+          
+          if (isChecked) {
+            checkbox.classList.remove('checked');
+          } else {
+            checkbox.classList.add('checked');
+          }
+        });
+      });
+      
+      // Generate Plan button - update to work with any button with generate-plan-btn class
+      const generatePlanBtns = document.querySelectorAll('.generate-plan-btn');
+
+      if (generatePlanBtns.length > 0) {
+        generatePlanBtns.forEach(btn => {
+          btn.addEventListener('click', async () => {
+            // Get the parent basket item
+            const basketItem = btn.closest('.basket-item');
+            
+            // Count selected checkboxes
+            const selectedCheckboxes = basketItem.querySelectorAll('.custom-checkbox[data-checked="true"]');
+            
+            // Check if minimum 10 items are selected
+            if (selectedCheckboxes.length < 10) {
+              showError('Por favor selecciona al menos 10 productos antes de generar el plan.');
+              return;
+            }
+            
+            // Show loading overlay
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            
+            try {
+              // Get selected ingredients
+              const selectedIngredients = [];
+              selectedCheckboxes.forEach(checkbox => {
+                const ingredientText = checkbox.nextElementSibling.textContent.split('(')[0].trim();
+                selectedIngredients.push(ingredientText);
+              });
+              
+              // Get diet filter from category
+              const dietFilter = basketItem.getAttribute('data-category');
+              
+              // Call the Recipe Generator Loop API
+              const response = await fetch('https://magicloops.dev/api/loop/03c4fbdb-4f1c-48e2-9699-0e6c5fc33dd9/run', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  selectedIngredients: selectedIngredients,
+                  dietFilter: dietFilter
+                })
+              });
+              
+              if (!response.ok) {
+                throw new Error('Error al generar el plan de comidas');
+              }
+              
+              const responseJson = await response.json();
+              
+              // Update the Plan Semanal tab with the generated meal plan
+              updateMealPlan(responseJson.weeklyPlan);
+              
+              // Switch to the Plan tab
+              document.querySelector('[data-tab="plan"]').click();
+              
+            } catch (error) {
+              showError(error.message || 'Error al generar el plan de comidas');
+            } finally {
+              // Hide loading overlay
+              document.getElementById('loading-overlay').classList.add('hidden');
+            }
+          });
+        });
+      }
+      
+      // Charts for Statistics tab
+      if (document.getElementById('caloriesChart') && document.getElementById('macrosChart')) {
+        // Calories Chart
+        const caloriesCtx = document.getElementById('caloriesChart').getContext('2d');
+        new Chart(caloriesCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+            datasets: [{
+              label: 'Calorías (kcal)',
+              data: [420, 380, 410, 390, 430, 400, 375],
+              backgroundColor: [
+                'rgba(76, 175, 80, 0.6)',
+                'rgba(76, 175, 80, 0.6)',
+                'rgba(76, 175, 80, 0.6)',
+                'rgba(76, 175, 80, 0.6)',
+                'rgba(76, 175, 80, 0.6)',
+                'rgba(76, 175, 80, 0.6)',
+                'rgba(76, 175, 80, 0.6)'
+              ],
+              borderColor: [
+                'rgba(76, 175, 80, 1)',
+                'rgba(76, 175, 80, 1)',
+                'rgba(76, 175, 80, 1)',
+                'rgba(76, 175, 80, 1)',
+                'rgba(76, 175, 80, 1)',
+                'rgba(76, 175, 80, 1)',
+                'rgba(76, 175, 80, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+        
+        // Macros Chart
+        const macrosCtx = document.getElementById('macrosChart').getContext('2d');
+        new Chart(macrosCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Proteínas', 'Carbohidratos', 'Grasas', 'Fibra'],
+            datasets: [{
+              label: 'Gramos por día (promedio)',
+              data: [18, 48, 9, 8],
+              backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)'
+              ],
+              borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+      
+      // Function to show error message
+      function showError(message) {
+        const errorToast = document.getElementById('error-toast');
+        const errorMessage = document.getElementById('error-message');
+        
+        errorMessage.textContent = message;
+        errorToast.classList.remove('hidden');
+        
+        setTimeout(() => {
+          errorToast.classList.add('hidden');
+        }, 3000);
+      }
+      
+      // Add this function to update the meal plan display
+      function updateMealPlan(weeklyPlan) {
+        const planTab = document.getElementById('plan-tab');
+        
+        // Clear existing content except the header
+        const header = planTab.querySelector('.mb-6');
+        planTab.innerHTML = '';
+        planTab.appendChild(header);
+        
+        // Create container for the plan
+        const planContainer = document.createElement('div');
+        planContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+        
+        // Add each day to the plan
+        weeklyPlan.forEach(day => {
+          // Create day card
+          const dayCard = document.createElement('div');
+          dayCard.className = 'recipe-card bg-white shadow-md overflow-hidden';
+          
+          // Create day header
+          const dayHeader = document.createElement('div');
+          dayHeader.className = 'p-4 bg-green-50';
+          dayHeader.innerHTML = `<h3 class="font-semibold text-gray-700">${day.day}</h3>`;
+          
+          // Create content container
+          const content = document.createElement('div');
+          content.className = 'p-5';
+          
+          // Add meal information
+          content.innerHTML = `
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">${day.dishName}</h4>
+            <div class="mb-3">
+              <span class="badge bg-green-100 text-green-800">${day.calories} kcal</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Ingredientes utilizados:</p>
+            <ul class="text-sm text-gray-600 mb-4 space-y-1">
+              ${day.ingredients.map(ingredient => `
+                <li class="flex items-start">
+                  <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                  <span>${ingredient}</span>
+                </li>
+              `).join('')}
+            </ul>
+            
+            <div class="border-t border-gray-100 pt-3 mb-3">
+              <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
+              <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="bg-blue-50 rounded p-2 text-center">
+                  <p class="text-blue-800 font-semibold">${day.nutrition.proteins}g</p>
+                  <p class="text-gray-500">Proteínas</p>
+                </div>
+                <div class="bg-yellow-50 rounded p-2 text-center">
+                  <p class="text-yellow-800 font-semibold">${day.nutrition.carbs}g</p>
+                  <p class="text-gray-500">Carbos</p>
+                </div>
+                <div class="bg-red-50 rounded p-2 text-center">
+                  <p class="text-red-800 font-semibold">${day.nutrition.fats}g</p>
+                  <p class="text-gray-500">Grasas</p>
+                </div>
+                <div class="bg-green-50 rounded p-2 text-center">
+                  <p class="text-green-800 font-semibold">${day.nutrition.vitamins.join(', ')}</p>
+                  <p class="text-gray-500">Vitaminas</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600">
+              <i class="fas fa-heart text-red-500 mr-1"></i>
+              <span>${day.benefit}</span>
+            </div>
+          `;
+          
+          // Assemble the card
+          dayCard.appendChild(dayHeader);
+          dayCard.appendChild(content);
+          
+          // Add to container
+          planContainer.appendChild(dayCard);
+        });
+        
+        // Add the plan container to the tab
+        planTab.appendChild(planContainer);
+      }
+    });
+  </script>
+</body>
+</html>
