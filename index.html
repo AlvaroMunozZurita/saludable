@@ -277,60 +277,81 @@
         <p id="no-results-message" class="hidden text-gray-600 py-4 text-center bg-gray-50 rounded-xl">No hay recetas disponibles en esta categoría por ahora.</p>
         
         <!-- Wrap basket items in container -->
-        <div id="basket-container">
-          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300" data-category="vegetariana">
-            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Vegetariana</h3>
-            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
-            
-            <div class="space-y-3 mb-6">
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Espinaca (200g)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Tomates (4 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Brócoli (1 unidad)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Zanahorias (6 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Garbanzos (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Lentejas (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Queso tofu (250g)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Cebolla (2 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pimientos (3 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Arroz integral (1kg)</span>
-              </div>
-            </div>
-            
-            <div class="flex justify-end">
-              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                Generar plan semanal
-              </button>
-            </div>
-          </div>
+<div id="basket-container">
+  <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300" data-category="vegetariana">
+    <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Vegetariana</h3>
+    <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+
+    <div class="space-y-3 mb-6">
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1584270354949-1f5a2f90b7fb" alt="Espinaca" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Espinaca (200g)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Tomates (4 unidades)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1584270354643-5730cdaac66b" alt="Brócoli" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Brócoli (1 unidad)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1582515073490-dc0c1d9c2f4c" alt="Zanahorias" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Zanahorias (6 unidades)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2" alt="Garbanzos" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Garbanzos (500g)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1604909053195-30c6a52acae4" alt="Lentejas" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Lentejas (500g)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1604909053217-6eaf0b2d0bbd" alt="Queso tofu" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Queso tofu (250g)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1603052875876-9786b1bdc7a5" alt="Cebolla" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Cebolla (2 unidades)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1589927986089-35812388d1f4" alt="Pimientos" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Pimientos (3 unidades)</span>
+      </div>
+
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1598511726942-1f9b228556bb" alt="Arroz integral" class="w-10 h-10 rounded-md mr-3 object-cover" />
+        <div class="custom-checkbox mr-3" data-checked="false"></div>
+        <span class="text-gray-700">Arroz integral (1kg)</span>
+      </div>
+    </div>
+
+    <div class="flex justify-end">
+      <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+        Generar plan semanal
+      </button>
+    </div>
+  </div>
+</div>
+
           
           <!-- Additional basket items with different categories (initially hidden) -->
           <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="economica">
