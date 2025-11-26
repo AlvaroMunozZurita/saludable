@@ -1,65 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MealPlanner Pro - Tu planificador semanal de comidas</title>
-  
+
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <style id="app-style">
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f8f9fa;
     }
-    
+
     .card {
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    
+
     .card:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
-    
+
     .category-btn {
       transition: all 0.3s ease;
     }
-    
+
     .category-btn:hover {
       transform: translateY(-2px);
     }
-    
+
     .category-btn.active {
       background-color: #4CAF50;
       color: white;
     }
-    
+
     .recipe-card {
       border-radius: 12px;
       overflow: hidden;
       transition: all 0.3s ease;
     }
-    
+
     .recipe-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
-    
+
     .badge {
       border-radius: 20px;
       padding: 4px 12px;
@@ -67,12 +68,12 @@
       font-weight: 600;
       letter-spacing: 0.5px;
     }
-    
+
     .tab {
       position: relative;
       cursor: pointer;
     }
-    
+
     .tab.active:after {
       content: '';
       position: absolute;
@@ -84,7 +85,7 @@
       border-radius: 50%;
       background-color: #4CAF50;
     }
-    
+
     .floating-btn {
       position: fixed;
       bottom: 80px;
@@ -93,28 +94,28 @@
       border-radius: 50%;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
-    
+
     .expiry-item {
       border-left: 4px solid;
       transition: all 0.3s ease;
     }
-    
+
     .expiry-item:hover {
       transform: translateX(5px);
     }
-    
+
     .expiry-urgent {
       border-color: #ef4444;
     }
-    
+
     .expiry-warning {
       border-color: #f59e0b;
     }
-    
+
     .expiry-ok {
       border-color: #10b981;
     }
-    
+
     /* Mobile Bottom Navigation */
     .mobile-nav {
       position: fixed;
@@ -124,45 +125,46 @@
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
       z-index: 100;
     }
-    
+
     @media (min-width: 768px) {
       .mobile-nav {
         display: none;
       }
     }
-    
+
     /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
     }
-    
+
     ::-webkit-scrollbar-track {
       background: #f1f1f1;
     }
-    
+
     ::-webkit-scrollbar-thumb {
       background: #c1c1c1;
       border-radius: 4px;
     }
-    
+
     ::-webkit-scrollbar-thumb:hover {
       background: #a1a1a1;
     }
-    
+
     /* Skeleton loading */
     .skeleton {
       animation: skeleton-loading 1s linear infinite alternate;
     }
-    
+
     @keyframes skeleton-loading {
       0% {
         background-color: #e2e8f0;
       }
+
       100% {
         background-color: #f1f5f9;
       }
     }
-    
+
     /* Custom checkboxes */
     .custom-checkbox {
       width: 20px;
@@ -174,12 +176,12 @@
       position: relative;
       transition: all 0.3s ease;
     }
-    
+
     .custom-checkbox.checked {
       background-color: #4CAF50;
       border-color: #4CAF50;
     }
-    
+
     .custom-checkbox.checked:after {
       content: '\f00c';
       font-family: 'Font Awesome 6 Free';
@@ -191,33 +193,40 @@
       color: white;
       font-size: 12px;
     }
-    
+
     /* Basket transitions */
     .basket-item {
       opacity: 1;
     }
-    
+
     .fade-out {
       opacity: 0;
     }
-    
+
     .fade-in {
       animation: fadeIn 0.5s;
     }
-    
+
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
+
 <body class="bg-gray-50">
   <!-- Loading Overlay -->
-  <div id="loading-overlay" class="hidden fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col items-center justify-center">
+  <div id="loading-overlay"
+    class="hidden fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col items-center justify-center">
     <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
     <p class="mt-4 text-gray-700 font-medium">Cargando...</p>
   </div>
-  
+
   <!-- Error Message Toast -->
   <div id="error-toast" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
     <div class="flex items-center">
@@ -253,7 +262,8 @@
     <section id="canasta-tab" class="block">
       <div class="mb-6">
         <div class="relative">
-          <input type="text" placeholder="Buscar canasta de alimentos..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          <input type="text" placeholder="Buscar canasta de alimentos..."
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
           <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
         </div>
       </div>
@@ -261,395 +271,481 @@
       <div class="mb-8">
         <h2 class="text-lg font-semibold text-gray-800 mb-3">Categorías populares</h2>
         <div class="flex flex-wrap gap-2">
-          <button class="category-btn active bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium" data-category="todas">Todas</button>
-          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="vegetariana">Vegetariana</button>
-          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="economica">Económica</button>
-          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="alta-proteinas">Alta en proteínas</button>
-          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="baja-carbohidratos">Baja en carbohidratos</button>
-          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium" data-category="mediterranea">Mediterránea</button>
+          <button class="category-btn active bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium"
+            data-category="todas">Todas</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+            data-category="vegetariana">Vegetariana</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+            data-category="economica">Económica</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+            data-category="alta-proteinas">Alta en proteínas</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+            data-category="baja-carbohidratos">Baja en carbohidratos</button>
+          <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+            data-category="mediterranea">Mediterránea</button>
         </div>
       </div>
 
       <div class="mb-8">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">Canasta seleccionada</h2>
-        
+
         <!-- Add no-results message (initially hidden) -->
-        <p id="no-results-message" class="hidden text-gray-600 py-4 text-center bg-gray-50 rounded-xl">No hay recetas disponibles en esta categoría por ahora.</p>
-        
+        <p id="no-results-message" class="hidden text-gray-600 py-4 text-center bg-gray-50 rounded-xl">No hay recetas
+          disponibles en esta categoría por ahora.</p>
+
         <!-- subido Wrap basket items in container -->
-<div id="basket-container">
-  <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300" data-category="vegetariana">
-    <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Vegetariana</h3>
-    <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
-
-    <div class="space-y-3 mb-6">
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1584270354949-1f5a2f90b7fb" alt="Espinaca" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Espinaca (200g)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Tomates (4 unidades)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1584270354643-5730cdaac66b" alt="Brócoli" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Brócoli (1 unidad)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1582515073490-dc0c1d9c2f4c" alt="Zanahorias" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Zanahorias (6 unidades)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2" alt="Garbanzos" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Garbanzos (500g)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1604909053195-30c6a52acae4" alt="Lentejas" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Lentejas (500g)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1604909053217-6eaf0b2d0bbd" alt="Queso tofu" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Queso tofu (250g)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1603052875876-9786b1bdc7a5" alt="Cebolla" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Cebolla (2 unidades)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1589927986089-35812388d1f4" alt="Pimientos" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Pimientos (3 unidades)</span>
-      </div>
-
-      <div class="flex items-center">
-        <img src="https://images.unsplash.com/photo-1598511726942-1f9b228556bb" alt="Arroz integral" class="w-10 h-10 rounded-md mr-3 object-cover" />
-        <div class="custom-checkbox mr-3" data-checked="false"></div>
-        <span class="text-gray-700">Arroz integral (1kg)</span>
-      </div>
-    </div>
-
-    <div class="flex justify-end">
-      <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-        Generar plan semanal
-      </button>
-    </div>
-  </div>
-</div>
-
-          
-          <!-- Additional basket items with different categories (initially hidden) -->
-          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="economica">
-            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Económica</h3>
+        <div id="basket-container">
+          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300"
+            data-category="vegetariana">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Vegetariana</h3>
             <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
-            
+
             <div class="space-y-3 mb-6">
               <div class="flex items-center">
-                <img src="https://cocinista.b-cdn.net/download/bancorecursos/recetas/receta-arroz-glutinoso-vapor.jpg" alt="Arroz" class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://1.bp.blogspot.com/-uuqO4kd_hz8/XT-Ie5Qr8LI/AAAAAAAANfA/JmbiThzqLUMuaHNyFQ7wAFJ33oFkZAPlACLcBGAs/s1600/espinaca.jpg" alt="Espinaca"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Arroz (1kg)</span>
+                <span class="text-gray-700">Espinaca (200g)</span>
               </div>
+
               <div class="flex items-center">
-                <img src="https://4rfreshandfrozen.com/cdn/shop/products/Potato_1512x.jpg?v=1587278401" alt="Patatas" class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://st.depositphotos.com/1817356/1604/i/950/depositphotos_16045323-stock-photo-tomato.jpg" alt="Tomates"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Patatas (1kg)</span>
+                <span class="text-gray-700">Tomates (4 unidades)</span>
               </div>
+
               <div class="flex items-center">
-                <img src="https://www.lasemilleria.com/img/med/zanahoria-400.jpg" alt="Zanahorias" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Zanahorias (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.quironsalud.com/es/comunicacion/actualidad/cebolla.ficheros/2440952-cebolla.jpg?width=400&height=342&aspectRatio=true" alt="Cebollas" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Cebollas (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.bancodealimentoschicago.org/wp-content/uploads/2022/03/Lentils-1.jpg" alt="Lentejas" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Lentejas (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.zayma.com.mx/wp-content/uploads/2023/10/frijol-negro-2-4.jpg" alt="Frijoles" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Frijoles (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/D5666EAA-F144-4205-B5D2-AE84080AA898/Derivates/18FA3AC2-CE9E-4F97-8D75-F3B67D43C599.jpg" alt="Pan" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pan integral (1 barra)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/250px-Tomato_je.jpg" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Tomates (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://imagenes.elpais.com/resizer/v2/QTB47TQUD5C2XBFAKTTP45ZUTA.jpg?auth=2150a206ee981701493b9ef40816bcb68fc91701a97815d2d3ce0b0d25e05cce&width=1200" alt="Huevos" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Huevos (12 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.recetasnestle.com.mx/sites/default/files/styles/crop_article_banner_desktop_nes/public/2022-03/avena.jpg.webp?h=e8383989&itok=siX8MBPU" alt="Avena" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Avena (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/250px-Milk_glass.jpg" alt="Leche" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Leche (1L)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.annarecetasfaciles.com/files/img_5118-815x458.jpg" alt="Queso" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Queso fresco (200g)</span>
-              </div>
-            </div>
-            
-            <div class="flex justify-end">
-              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                Generar plan semanal
-              </button>
-            </div>
-          </div>
-          
-          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="alta-proteinas">
-            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Alta en Proteínas</h3>
-            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
-            
-            <div class="space-y-3 mb-6">
-              <div class="flex items-center">
-                <img src="https://www.coren.es/wp-content/uploads/2018/05/Pollo-fresco-entero.jpg" alt="Pollo fresco" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pollo (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://tse4.mm.bing.net/th/id/OIP.s2JbLsAtFbpoS5Li2I989AHaD3?w=650&h=340&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Huevos" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Huevos (12 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://queapetito.com/wp-content/uploads/2018/11/f6screen84033e6b.jpg" alt="Queso cottage" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Queso cottage (250g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.oWb66nUy3cJOIl1ggu3rzgHaEK?w=265&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Lentejas" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Lentejas (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.QQmN4yWv5Ey50Ajk2X7HEQHaEK?w=324&h=182&c=7&r=0&o=7&pid=1.7&rm=3" alt="Salmón" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Salmón (400g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.fBTQR_l6696zCcEPxElolQHaG2?w=183&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Atún en lata" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Atún en lata (200g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.gNlN5rPZRRAHpc-iS6HiEQHaE9?w=259&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Carne molida" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Carne molida (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.TOKesXaq_jWBdkIWivWXYwHaDt?w=300&h=175&c=7&r=0&o=7&pid=1.7&rm=3" alt="Yogur griego" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Yogur griego (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.SIAUScxXWARpFpjgwDPDkgHaE6?w=228&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Garbanzos" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Garbanzos (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.UB9Opej0mEDStfEpGb3eQQHaFj?w=239&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Pechuga de pavo" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pechuga de pavo (400g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.2XY17OQg9R-uwr-icWglHQHaGt?w=187&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Almendras" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Almendras (200g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.uWBDegsJK8eAU6k0OFswPAHaEK?w=283&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Nueces" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Nueces (150g)</span>
-              </div>
-            </div>
-            
-            <div class="flex justify-end">
-              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                Generar plan semanal
-              </button>
-            </div>
-          </div>
-          
-          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="baja-carbohidratos">
-            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Baja en Carbohidratos</h3>
-            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
-            
-            <div class="space-y-3 mb-6">
-              <div class="flex items-center">
-                <img src="https://www.smartnfinal.com.mx/wp-content/uploads/2016/09/18251-AGUACATE-HASS-1-KG-510x510.jpg.webp" alt="Aguacate" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Aguacate (3 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Max%27s_Roasted_Chicken_-_Evan_Swigart.jpg/330px-Max%27s_Roasted_Chicken_-_Evan_Swigart.jpg" alt="Pollo" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pollo (500g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://img.freepik.com/foto-gratis/huevos-marrones_2829-13455.jpg?semt=ais_hybrid&w=740&q=80" alt="Huevos" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Huevos (12 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.conasi.eu/blog/wp-content/uploads/2023/07/recetas-con-espinacas-1.jpg" alt="Espinacas" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Espinacas (200g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.quironsalud.com/es/comunicacion/actualidad/brocoli.ficheros/2621447-brocoli.jpg?width=400&height=336&aspectRatio=true" alt="Brócoli" class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://cdn.pixabay.com/photo/2016/03/05/19/02/broccoli-1238250_1280.jpg" alt="Brócoli"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Brócoli (1 unidad)</span>
               </div>
+
               <div class="flex items-center">
-                <img src="https://s3.abcstatics.com/media/bienestar/2020/09/09/calabacin-k9TD--1248x698@abc.jpg" alt="Calabacín" class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://mercaldas.vteximg.com.br/arquivos/ids/186471-1300-1300/Zanahoria.jpg?v=637088284828770000" alt="Zanahorias"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Calabacín (2 unidades)</span>
+                <span class="text-gray-700">Zanahorias (6 unidades)</span>
               </div>
+
               <div class="flex items-center">
-                <img src="https://dfwblobstorage.blob.core.windows.net/ewcmediacontainer/eatwisconsincheese/media/content/cheesemasters-2019/quesofresco-header_3.jpg" alt="Queso" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Queso (250g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://www.bancodealimentoschicago.org/wp-content/uploads/2023/10/Skillet-Lemon-Pepper-Salmon-1.jpg" alt="Salmón" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Salmón (400g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://imag.bonviveur.com/un-punado-de-almendras-con-su-piel-de-color-marron.webp" alt="Almendras" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Almendras (200g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://sip.pochteca.net/media/blog/u/s/usos-beneficios-del-aceite-de-oliva_1.jpg" alt="Aceite" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Aceite de oliva (500ml)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tomates_cerises_Luc_Viatour.jpg/250px-Tomates_cerises_Luc_Viatour.jpg" alt="Tomato_je" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Tomates cherry (250g)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://moisaner.com/wp-content/uploads/2020/01/Pepino2.jpg" alt="Pepino" class="w-10 h-10 rounded-md mr-3 object-cover" />
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pepino (2 unidades)</span>
-              </div>
-            </div>
-            
-            <div class="flex justify-end">
-              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                Generar plan semanal
-              </button>
-            </div>
-          </div>
-          
-          <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden" data-category="mediterranea">
-            <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Mediterránea</h3>
-            <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
-            
-            <div class="space-y-3 mb-6">
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.zfr4lu1K7UBOlj2UuSBqJgHaE6?w=279&h=185&c=7&r=0&o=7&pid=1.7&rm=3" alt="Aceite de oliva" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Aceite de oliva (500ml)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.sR-ItzO32Q5VVA7wWUfAjgHaE6?w=262&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Tomates (6 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/OIP.rakLd1k4kRxTJqNvPjZ4mAHaEM?w=281&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pepino (2 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.mL46YhHtF8YW5f8RKDkfawHaE8?w=256&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Queso feta (200g)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.SmLwp9P_RY9S4qVvitg8uwHaFj?w=249&h=187&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Aceitunas negras (100g)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.9SxbbmryfuOsa72_zMaGnwHaE8?w=292&h=195&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Cebolla roja (2 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.oppVlYfk-PJ5t9zVCr_b9AHaCv?w=291&h=129&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pimientos (3 unidades)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.uul0hEKt2ipZ6xojSL68ZQHaFj?w=239&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pan integral (1 barra)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.yb__IiQVmv-gVnH6YVIsfQHaEj?w=291&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Pescado blanco (500g)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.uWBDegsJK8eAU6k0OFswPAHaEK?w=283&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
-                <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Nueces (200g)</span>
-              </div>
-              <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.SIAUScxXWARpFpjgwDPDkgHaE6?w=228&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+                <img src="https://ganagro.ec/wp-content/uploads/2020/11/garbanzo-grano-seco-consumo-ganagro.jpg" alt="Garbanzos"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Garbanzos (500g)</span>
               </div>
+
               <div class="flex items-center">
-                 <img src="https://th.bing.com/th/id/OIP.UN5jfpzW2XL4stWpoKHj_gHaFO?w=243&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+                <img src="https://img.freepik.com/fotos-premium/lentejas-germinadas-sobre-fondo-blanco-alta-resolucion_1045575-251.jpg" alt="Lentejas"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
-                <span class="text-gray-700">Limones (4 unidades)</span>
+                <span class="text-gray-700">Lentejas (500g)</span>
+              </div>
+
+              <div class="flex items-center">
+                <img src="https://thumbs.dreamstime.com/b/queso-tofu-aislado-en-fondo-blanco-con-senda-de-recorte-y-profundidad-completa-del-campo-181352721.jpg" alt="Queso tofu"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Queso tofu (250g)</span>
+              </div>
+
+              <div class="flex items-center">
+                <img src="https://th.bing.com/th/id/R.6804b4b6ca1b19ab2a8b36733050f81a?rik=wxw6H1P1Z%2f%2fUNg&pid=ImgRaw&r=0" alt="Cebolla"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Cebolla (2 unidades)</span>
+              </div>
+
+              <div class="flex items-center">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.UV7HY3J4FRyds1bbgVeKNgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Pimientos"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Pimientos (3 unidades)</span>
+              </div>
+
+              <div class="flex items-center">
+                <img src="https://cocinista.b-cdn.net/download/bancorecursos/recetas/receta-arroz-glutinoso-vapor.jpg" alt="Arroz integral"
+                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <div class="custom-checkbox mr-3" data-checked="false"></div>
+                <span class="text-gray-700">Arroz integral (1kg)</span>
               </div>
             </div>
-            
+
             <div class="flex justify-end">
-              <button class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              <button
+                class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
                 Generar plan semanal
               </button>
             </div>
           </div>
         </div>
+
+
+        <!-- Additional basket items with different categories (initially hidden) -->
+        <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden"
+          data-category="economica">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Económica</h3>
+          <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center">
+              <img src="https://cocinista.b-cdn.net/download/bancorecursos/recetas/receta-arroz-glutinoso-vapor.jpg"
+                alt="Arroz" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Arroz (1kg)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://4rfreshandfrozen.com/cdn/shop/products/Potato_1512x.jpg?v=1587278401" alt="Patatas"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Patatas (1kg)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://www.lasemilleria.com/img/med/zanahoria-400.jpg" alt="Zanahorias"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Zanahorias (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://www.quironsalud.com/es/comunicacion/actualidad/cebolla.ficheros/2440952-cebolla.jpg?width=400&height=342&aspectRatio=true"
+                alt="Cebollas" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Cebollas (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://www.bancodealimentoschicago.org/wp-content/uploads/2022/03/Lentils-1.jpg" alt="Lentejas"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Lentejas (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://www.zayma.com.mx/wp-content/uploads/2023/10/frijol-negro-2-4.jpg" alt="Frijoles"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Frijoles (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/D5666EAA-F144-4205-B5D2-AE84080AA898/Derivates/18FA3AC2-CE9E-4F97-8D75-F3B67D43C599.jpg"
+                alt="Pan" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pan integral (1 barra)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/250px-Tomato_je.jpg"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Tomates (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://imagenes.elpais.com/resizer/v2/QTB47TQUD5C2XBFAKTTP45ZUTA.jpg?auth=2150a206ee981701493b9ef40816bcb68fc91701a97815d2d3ce0b0d25e05cce&width=1200"
+                alt="Huevos" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Huevos (12 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://www.recetasnestle.com.mx/sites/default/files/styles/crop_article_banner_desktop_nes/public/2022-03/avena.jpg.webp?h=e8383989&itok=siX8MBPU"
+                alt="Avena" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Avena (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/250px-Milk_glass.jpg"
+                alt="Leche" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Leche (1L)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://www.annarecetasfaciles.com/files/img_5118-815x458.jpg" alt="Queso"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Queso fresco (200g)</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              Generar plan semanal
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden"
+          data-category="alta-proteinas">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Alta en Proteínas</h3>
+          <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center">
+              <img src="https://www.coren.es/wp-content/uploads/2018/05/Pollo-fresco-entero.jpg" alt="Pollo fresco"
+                class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pollo (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://tse4.mm.bing.net/th/id/OIP.s2JbLsAtFbpoS5Li2I989AHaD3?w=650&h=340&rs=1&pid=ImgDetMain&o=7&rm=3"
+                alt="Huevos" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Huevos (12 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://queapetito.com/wp-content/uploads/2018/11/f6screen84033e6b.jpg" alt="Queso cottage"
+                class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Queso cottage (250g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.oWb66nUy3cJOIl1ggu3rzgHaEK?w=265&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Lentejas" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Lentejas (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.QQmN4yWv5Ey50Ajk2X7HEQHaEK?w=324&h=182&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Salmón" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Salmón (400g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.fBTQR_l6696zCcEPxElolQHaG2?w=183&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Atún en lata" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Atún en lata (200g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.gNlN5rPZRRAHpc-iS6HiEQHaE9?w=259&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Carne molida" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Carne molida (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.TOKesXaq_jWBdkIWivWXYwHaDt?w=300&h=175&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Yogur griego" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Yogur griego (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.SIAUScxXWARpFpjgwDPDkgHaE6?w=228&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Garbanzos" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Garbanzos (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.UB9Opej0mEDStfEpGb3eQQHaFj?w=239&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Pechuga de pavo" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pechuga de pavo (400g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.2XY17OQg9R-uwr-icWglHQHaGt?w=187&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Almendras" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Almendras (200g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.uWBDegsJK8eAU6k0OFswPAHaEK?w=283&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Nueces" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Nueces (150g)</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              Generar plan semanal
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden"
+          data-category="baja-carbohidratos">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Baja en Carbohidratos</h3>
+          <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center">
+              <img
+                src="https://www.smartnfinal.com.mx/wp-content/uploads/2016/09/18251-AGUACATE-HASS-1-KG-510x510.jpg.webp"
+                alt="Aguacate" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Aguacate (3 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Max%27s_Roasted_Chicken_-_Evan_Swigart.jpg/330px-Max%27s_Roasted_Chicken_-_Evan_Swigart.jpg"
+                alt="Pollo" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pollo (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://img.freepik.com/foto-gratis/huevos-marrones_2829-13455.jpg?semt=ais_hybrid&w=740&q=80"
+                alt="Huevos" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Huevos (12 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://www.conasi.eu/blog/wp-content/uploads/2023/07/recetas-con-espinacas-1.jpg"
+                alt="Espinacas" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Espinacas (200g)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://www.quironsalud.com/es/comunicacion/actualidad/brocoli.ficheros/2621447-brocoli.jpg?width=400&height=336&aspectRatio=true"
+                alt="Brócoli" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Brócoli (1 unidad)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://s3.abcstatics.com/media/bienestar/2020/09/09/calabacin-k9TD--1248x698@abc.jpg"
+                alt="Calabacín" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Calabacín (2 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://dfwblobstorage.blob.core.windows.net/ewcmediacontainer/eatwisconsincheese/media/content/cheesemasters-2019/quesofresco-header_3.jpg"
+                alt="Queso" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Queso (250g)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://www.bancodealimentoschicago.org/wp-content/uploads/2023/10/Skillet-Lemon-Pepper-Salmon-1.jpg"
+                alt="Salmón" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Salmón (400g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://imag.bonviveur.com/un-punado-de-almendras-con-su-piel-de-color-marron.webp"
+                alt="Almendras" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Almendras (200g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://sip.pochteca.net/media/blog/u/s/usos-beneficios-del-aceite-de-oliva_1.jpg" alt="Aceite"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Aceite de oliva (500ml)</span>
+            </div>
+            <div class="flex items-center">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tomates_cerises_Luc_Viatour.jpg/250px-Tomates_cerises_Luc_Viatour.jpg"
+                alt="Tomato_je" class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Tomates cherry (250g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://moisaner.com/wp-content/uploads/2020/01/Pepino2.jpg" alt="Pepino"
+                class="w-10 h-10 rounded-md mr-3 object-cover" />
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pepino (2 unidades)</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              Generar plan semanal
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-5 basket-item transition-opacity duration-300 hidden"
+          data-category="mediterranea">
+          <h3 class="text-xl font-semibold text-gray-800 mb-3">Canasta Mediterránea</h3>
+          <p class="text-gray-600 mb-4">Selecciona los ingredientes que tienes o planeas comprar:</p>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.zfr4lu1K7UBOlj2UuSBqJgHaE6?w=279&h=185&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Aceite de oliva" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Aceite de oliva (500ml)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.sR-ItzO32Q5VVA7wWUfAjgHaE6?w=262&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Tomates (6 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.rakLd1k4kRxTJqNvPjZ4mAHaEM?w=281&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pepino (2 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.mL46YhHtF8YW5f8RKDkfawHaE8?w=256&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Queso feta (200g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.SmLwp9P_RY9S4qVvitg8uwHaFj?w=249&h=187&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Aceitunas negras (100g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.9SxbbmryfuOsa72_zMaGnwHaE8?w=292&h=195&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Cebolla roja (2 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.oppVlYfk-PJ5t9zVCr_b9AHaCv?w=291&h=129&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pimientos (3 unidades)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.uul0hEKt2ipZ6xojSL68ZQHaFj?w=239&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pan integral (1 barra)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.yb__IiQVmv-gVnH6YVIsfQHaEj?w=291&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Pescado blanco (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.uWBDegsJK8eAU6k0OFswPAHaEK?w=283&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Nueces (200g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.SIAUScxXWARpFpjgwDPDkgHaE6?w=228&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Garbanzos (500g)</span>
+            </div>
+            <div class="flex items-center">
+              <img src="https://th.bing.com/th/id/OIP.UN5jfpzW2XL4stWpoKHj_gHaFO?w=243&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
+                alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover">
+              <div class="custom-checkbox mr-3" data-checked="false"></div>
+              <span class="text-gray-700">Limones (4 unidades)</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              class="generate-plan-btn bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              Generar plan semanal
+            </button>
+          </div>
+        </div>
+      </div>
       </div>
     </section>
 
@@ -690,7 +786,7 @@
                 <span>Cebolla</span>
               </li>
             </ul>
-            
+
             <div class="border-t border-gray-100 pt-3 mb-3">
               <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
               <div class="grid grid-cols-4 gap-2 text-xs">
@@ -712,14 +808,14 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="text-sm text-gray-600">
               <i class="fas fa-heart text-red-500 mr-1"></i>
               <span>Rico en hierro y fibra para mejor digestión</span>
             </div>
           </div>
         </div>
-        
+
         <!-- Tuesday -->
         <div class="recipe-card bg-white shadow-md overflow-hidden">
           <div class="p-4 bg-green-50">
@@ -749,7 +845,7 @@
                 <span>Arroz integral</span>
               </li>
             </ul>
-            
+
             <div class="border-t border-gray-100 pt-3 mb-3">
               <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
               <div class="grid grid-cols-4 gap-2 text-xs">
@@ -771,14 +867,14 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="text-sm text-gray-600">
               <i class="fas fa-heart text-red-500 mr-1"></i>
               <span>Alto contenido en proteína vegetal y fibra</span>
             </div>
           </div>
         </div>
-        
+
         <!-- Wednesday -->
         <div class="recipe-card bg-white shadow-md overflow-hidden">
           <div class="p-4 bg-green-50">
@@ -808,7 +904,7 @@
                 <span>Arroz integral</span>
               </li>
             </ul>
-            
+
             <div class="border-t border-gray-100 pt-3 mb-3">
               <p class="text-sm font-medium text-gray-700 mb-2">Desglose nutricional:</p>
               <div class="grid grid-cols-4 gap-2 text-xs">
@@ -830,7 +926,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="text-sm text-gray-600">
               <i class="fas fa-heart text-red-500 mr-1"></i>
               <span>Rico en calcio y vitamina C</span>
@@ -863,7 +959,7 @@
       <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
         <div class="p-5">
           <h3 class="text-lg font-semibold text-gray-800 mb-4">Alimentos próximos a vencer</h3>
-          
+
           <div class="space-y-3">
             <div class="expiry-item expiry-urgent p-3 pl-4 bg-red-50 rounded">
               <div class="flex justify-between items-center">
@@ -871,43 +967,47 @@
                   <h4 class="font-medium text-gray-800">Espinacas</h4>
                   <p class="text-sm text-gray-600">Vence en 1 día</p>
                 </div>
-                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                <button
+                  class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
                   Ver recetas
                 </button>
               </div>
             </div>
-            
+
             <div class="expiry-item expiry-warning p-3 pl-4 bg-yellow-50 rounded">
               <div class="flex justify-between items-center">
                 <div>
                   <h4 class="font-medium text-gray-800">Tomates</h4>
                   <p class="text-sm text-gray-600">Vence en 3 días</p>
                 </div>
-                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                <button
+                  class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
                   Ver recetas
                 </button>
               </div>
             </div>
-            
+
             <div class="expiry-item expiry-warning p-3 pl-4 bg-yellow-50 rounded">
               <div class="flex justify-between items-center">
                 <div>
                   <h4 class="font-medium text-gray-800">Brócoli</h4>
                   <p class="text-sm text-gray-600">Vence en 4 días</p>
                 </div>
-                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                <button
+                  class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
                   Ver recetas
                 </button>
               </div>
             </div>
-            
+
             <div class="expiry-item expiry-ok p-3 pl-4 bg-green-50 rounded">
               <div class="flex justify-between items-center">
                 <div>
                   <h4 class="font-medium text-gray-800">Lentejas</h4>
                   <p class="text-sm text-gray-600">Vence en 14 días</p>
                 </div>
-                <button class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
+                <button
+                  class="text-sm bg-white hover:bg-gray-50 text-gray-700 px-3 py-1 rounded border border-gray-200">
                   Ver recetas
                 </button>
               </div>
@@ -919,7 +1019,7 @@
       <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="p-5">
           <h3 class="text-lg font-semibold text-gray-800 mb-4">Sugerencias rápidas de uso</h3>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="border border-gray-200 rounded-lg p-4">
               <h4 class="font-medium text-gray-800 mb-2">Batido Verde Energético</h4>
@@ -929,7 +1029,7 @@
                 <span>5 minutos de preparación</span>
               </div>
             </div>
-            
+
             <div class="border border-gray-200 rounded-lg p-4">
               <h4 class="font-medium text-gray-800 mb-2">Salsa de Tomate Casera</h4>
               <p class="text-sm text-gray-600 mb-3">Aprovecha tus tomates maduros</p>
@@ -938,7 +1038,7 @@
                 <span>20 minutos de preparación</span>
               </div>
             </div>
-            
+
             <div class="border border-gray-200 rounded-lg p-4">
               <h4 class="font-medium text-gray-800 mb-2">Puré de Brócoli</h4>
               <p class="text-sm text-gray-600 mb-3">Sopa cremosa con tu brócoli</p>
@@ -947,7 +1047,7 @@
                 <span>15 minutos de preparación</span>
               </div>
             </div>
-            
+
             <div class="border border-gray-200 rounded-lg p-4">
               <h4 class="font-medium text-gray-800 mb-2">Crema de Vegetales</h4>
               <p class="text-sm text-gray-600 mb-3">Combina todos tus vegetales cercanos a vencer</p>
@@ -977,7 +1077,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
           <div class="p-5">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Macronutrientes Promedio</h3>
@@ -986,7 +1086,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="bg-white rounded-xl shadow-md overflow-hidden lg:col-span-2">
           <div class="p-5">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Balance Nutricional Semanal</h3>
@@ -1031,28 +1131,29 @@
   </nav>
 
   <!-- Floating Action Buttons -->
-  <button class="floating-btn bg-green-500 hover:bg-green-600 text-white w-14 h-14 flex items-center justify-center transition-colors">
+  <button
+    class="floating-btn bg-green-500 hover:bg-green-600 text-white w-14 h-14 flex items-center justify-center transition-colors">
     <i class="fas fa-list-ul text-xl"></i>
   </button>
 
   <script id="app-script">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Tab Navigation
       const tabs = document.querySelectorAll('[data-tab]');
       const tabContents = document.querySelectorAll('section[id$="-tab"]');
-      
+
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
           const target = tab.getAttribute('data-tab');
-          
+
           // Hide all tab contents
           tabContents.forEach(content => {
             content.classList.add('hidden');
           });
-          
+
           // Show the selected tab content
           document.getElementById(`${target}-tab`).classList.remove('hidden');
-          
+
           // Update active state on tabs
           tabs.forEach(t => {
             if (t.getAttribute('data-tab') === target) {
@@ -1079,12 +1180,12 @@
           });
         });
       });
-      
+
       // Category buttons with filtering functionality
       const categoryButtons = document.querySelectorAll('.category-btn');
       const basketItems = document.querySelectorAll('.basket-item');
       const noResultsMessage = document.getElementById('no-results-message');
-      
+
       categoryButtons.forEach(button => {
         button.addEventListener('click', () => {
           // Update button styles
@@ -1092,21 +1193,21 @@
             btn.classList.remove('active', 'bg-green-500', 'text-white');
             btn.classList.add('bg-gray-100', 'text-gray-700');
           });
-          
+
           button.classList.add('active', 'bg-green-500', 'text-white');
           button.classList.remove('bg-gray-100', 'text-gray-700');
-          
+
           // Get selected category
           const category = button.getAttribute('data-category');
-          
+
           // Filter baskets
           let hasVisibleItems = false;
-          
+
           // Apply fade-out effect to all items
           basketItems.forEach(item => {
             item.classList.add('fade-out');
           });
-          
+
           // After short delay, update visibility and apply fade-in
           setTimeout(() => {
             basketItems.forEach(item => {
@@ -1119,7 +1220,7 @@
                 item.classList.remove('fade-in');
               }
             });
-            
+
             // Show/hide no results message
             if (hasVisibleItems) {
               noResultsMessage.classList.add('hidden');
@@ -1129,16 +1230,16 @@
           }, 300); // Slight delay for animation
         });
       });
-      
+
       // Custom checkboxes
       const checkboxes = document.querySelectorAll('.custom-checkbox');
-      
+
       checkboxes.forEach(checkbox => {
         checkbox.addEventListener('click', () => {
           const isChecked = checkbox.getAttribute('data-checked') === 'true';
-          
+
           checkbox.setAttribute('data-checked', isChecked ? 'false' : 'true');
-          
+
           if (isChecked) {
             checkbox.classList.remove('checked');
           } else {
@@ -1146,7 +1247,7 @@
           }
         });
       });
-      
+
       // Generate Plan button - update to work with any button with generate-plan-btn class
       const generatePlanBtns = document.querySelectorAll('.generate-plan-btn');
 
@@ -1155,19 +1256,19 @@
           btn.addEventListener('click', async () => {
             // Get the parent basket item
             const basketItem = btn.closest('.basket-item');
-            
+
             // Count selected checkboxes
             const selectedCheckboxes = basketItem.querySelectorAll('.custom-checkbox[data-checked="true"]');
-            
+
             // Check if minimum 10 items are selected
             if (selectedCheckboxes.length < 10) {
               showError('Por favor selecciona al menos 10 productos antes de generar el plan.');
               return;
             }
-            
+
             // Show loading overlay
             document.getElementById('loading-overlay').classList.remove('hidden');
-            
+
             try {
               // Get selected ingredients
               const selectedIngredients = [];
@@ -1175,10 +1276,10 @@
                 const ingredientText = checkbox.nextElementSibling.textContent.split('(')[0].trim();
                 selectedIngredients.push(ingredientText);
               });
-              
+
               // Get diet filter from category
               const dietFilter = basketItem.getAttribute('data-category');
-              
+
               // Call the Recipe Generator Loop API
               const response = await fetch('https://magicloops.dev/api/loop/03c4fbdb-4f1c-48e2-9699-0e6c5fc33dd9/run', {
                 method: 'POST',
@@ -1190,19 +1291,19 @@
                   dietFilter: dietFilter
                 })
               });
-              
+
               if (!response.ok) {
                 throw new Error('Error al generar el plan de comidas');
               }
-              
+
               const responseJson = await response.json();
-              
+
               // Update the Plan Semanal tab with the generated meal plan
               updateMealPlan(responseJson.weeklyPlan);
-              
+
               // Switch to the Plan tab
               document.querySelector('[data-tab="plan"]').click();
-              
+
             } catch (error) {
               showError(error.message || 'Error al generar el plan de comidas');
             } finally {
@@ -1212,7 +1313,7 @@
           });
         });
       }
-      
+
       // Charts for Statistics tab
       if (document.getElementById('caloriesChart') && document.getElementById('macrosChart')) {
         // Calories Chart
@@ -1255,7 +1356,7 @@
             }
           }
         });
-        
+
         // Macros Chart
         const macrosCtx = document.getElementById('macrosChart').getContext('2d');
         new Chart(macrosCtx, {
@@ -1291,48 +1392,48 @@
           }
         });
       }
-      
+
       // Function to show error message
       function showError(message) {
         const errorToast = document.getElementById('error-toast');
         const errorMessage = document.getElementById('error-message');
-        
+
         errorMessage.textContent = message;
         errorToast.classList.remove('hidden');
-        
+
         setTimeout(() => {
           errorToast.classList.add('hidden');
         }, 3000);
       }
-      
+
       // Add this function to update the meal plan display
       function updateMealPlan(weeklyPlan) {
         const planTab = document.getElementById('plan-tab');
-        
+
         // Clear existing content except the header
         const header = planTab.querySelector('.mb-6');
         planTab.innerHTML = '';
         planTab.appendChild(header);
-        
+
         // Create container for the plan
         const planContainer = document.createElement('div');
         planContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
-        
+
         // Add each day to the plan
         weeklyPlan.forEach(day => {
           // Create day card
           const dayCard = document.createElement('div');
           dayCard.className = 'recipe-card bg-white shadow-md overflow-hidden';
-          
+
           // Create day header
           const dayHeader = document.createElement('div');
           dayHeader.className = 'p-4 bg-green-50';
           dayHeader.innerHTML = `<h3 class="font-semibold text-gray-700">${day.day}</h3>`;
-          
+
           // Create content container
           const content = document.createElement('div');
           content.className = 'p-5';
-          
+
           // Add meal information
           content.innerHTML = `
             <h4 class="text-lg font-semibold text-gray-800 mb-2">${day.dishName}</h4>
@@ -1376,19 +1477,20 @@
               <span>${day.benefit}</span>
             </div>
           `;
-          
+
           // Assemble the card
           dayCard.appendChild(dayHeader);
           dayCard.appendChild(content);
-          
+
           // Add to container
           planContainer.appendChild(dayCard);
         });
-        
+
         // Add the plan container to the tab
         planTab.appendChild(planContainer);
       }
     });
   </script>
 </body>
+
 </html>
