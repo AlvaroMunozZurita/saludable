@@ -250,11 +250,95 @@
           <a href="javascript:void(0)" class="tab text-gray-500" data-tab="estadisticas">Estadísticas</a>
         </nav>
       </div>
-      <button class="md:hidden text-gray-700">
-        <i class="fas fa-user-circle text-xl"></i>
+      <button id="openModalBtn" class="text-gray-700">
+        <i class="fas fa-user-circle text-2xl md:text-3xl"></i>
       </button>
     </div>
   </header>
+
+  <!-- Modal de Registro -->
+  <div id="registerModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Registro</h2>
+        <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">&times;</button>
+      </div>
+      <form class="space-y-4">
+        <div>
+          <label class="block text-gray-700">Nombre</label>
+          <input type="text" class="w-full border rounded px-3 py-2" placeholder="Tu nombre">
+        </div>
+        <div>
+          <label class="block text-gray-700">Apellido</label>
+          <input type="text" class="w-full border rounded px-3 py-2" placeholder="Tu apellido">
+        </div>
+        <div>
+          <label class="block text-gray-700">Correo</label>
+          <input type="email" class="w-full border rounded px-3 py-2" placeholder="ejemplo@correo.com">
+        </div>
+        <div>
+          <label class="block text-gray-700">Usuario</label>
+          <input type="text" class="w-full border rounded px-3 py-2" placeholder="Nombre de usuario">
+        </div>
+        <div>
+          <label class="block text-gray-700">Contraseña</label>
+          <input type="password" class="w-full border rounded px-3 py-2" placeholder="********">
+        </div>
+        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+          Registrarse
+        </button>
+      </form>
+    </div>
+  </div>
+  <!-- Script para manejar el envío -->
+  <script>
+  const form = document.getElementById('registroForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+      nombre: form.querySelector('input[placeholder="Tu nombre"]').value,
+      apellido: form.querySelector('input[placeholder="Tu apellido"]').value,
+      correo: form.querySelector('input[placeholder="ejemplo@correo.com"]').value,
+      usuario: form.querySelector('input[placeholder="Nombre de usuario"]').value,
+      contrasena: form.querySelector('input[placeholder="********"]').value
+    };
+
+    // Aquí va tu fetch:
+    const response = await fetch("http://localhost/saludable/registro.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    alert(result.message || result.error);
+  });
+</script>
+
+  <!-- Script para abrir/cerrar modal -->
+  <script>
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const registerModal = document.getElementById('registerModal');
+
+    openModalBtn.addEventListener('click', () => {
+      registerModal.classList.remove('hidden');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      registerModal.classList.add('hidden');
+    });
+
+    // Cerrar modal al hacer clic fuera del contenido
+    registerModal.addEventListener('click', (e) => {
+      if (e.target === registerModal) {
+        registerModal.classList.add('hidden');
+      }
+    });
+  </script>
+
+
 
   <!-- Main Content -->
   <main class="container mx-auto px-4 py-6 pb-24">
@@ -302,15 +386,16 @@
 
             <div class="space-y-3 mb-6">
               <div class="flex items-center">
-                <img src="https://1.bp.blogspot.com/-uuqO4kd_hz8/XT-Ie5Qr8LI/AAAAAAAANfA/JmbiThzqLUMuaHNyFQ7wAFJ33oFkZAPlACLcBGAs/s1600/espinaca.jpg" alt="Espinaca"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img
+                  src="https://1.bp.blogspot.com/-uuqO4kd_hz8/XT-Ie5Qr8LI/AAAAAAAANfA/JmbiThzqLUMuaHNyFQ7wAFJ33oFkZAPlACLcBGAs/s1600/espinaca.jpg"
+                  alt="Espinaca" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Espinaca (200g)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://st.depositphotos.com/1817356/1604/i/950/depositphotos_16045323-stock-photo-tomato.jpg" alt="Tomates"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://st.depositphotos.com/1817356/1604/i/950/depositphotos_16045323-stock-photo-tomato.jpg"
+                  alt="Tomates" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Tomates (4 unidades)</span>
               </div>
@@ -323,50 +408,54 @@
               </div>
 
               <div class="flex items-center">
-                <img src="https://mercaldas.vteximg.com.br/arquivos/ids/186471-1300-1300/Zanahoria.jpg?v=637088284828770000" alt="Zanahorias"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img
+                  src="https://mercaldas.vteximg.com.br/arquivos/ids/186471-1300-1300/Zanahoria.jpg?v=637088284828770000"
+                  alt="Zanahorias" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Zanahorias (6 unidades)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://ganagro.ec/wp-content/uploads/2020/11/garbanzo-grano-seco-consumo-ganagro.jpg" alt="Garbanzos"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://ganagro.ec/wp-content/uploads/2020/11/garbanzo-grano-seco-consumo-ganagro.jpg"
+                  alt="Garbanzos" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Garbanzos (500g)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://img.freepik.com/fotos-premium/lentejas-germinadas-sobre-fondo-blanco-alta-resolucion_1045575-251.jpg" alt="Lentejas"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img
+                  src="https://img.freepik.com/fotos-premium/lentejas-germinadas-sobre-fondo-blanco-alta-resolucion_1045575-251.jpg"
+                  alt="Lentejas" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Lentejas (500g)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://thumbs.dreamstime.com/b/queso-tofu-aislado-en-fondo-blanco-con-senda-de-recorte-y-profundidad-completa-del-campo-181352721.jpg" alt="Queso tofu"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img
+                  src="https://thumbs.dreamstime.com/b/queso-tofu-aislado-en-fondo-blanco-con-senda-de-recorte-y-profundidad-completa-del-campo-181352721.jpg"
+                  alt="Queso tofu" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Queso tofu (250g)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://th.bing.com/th/id/R.6804b4b6ca1b19ab2a8b36733050f81a?rik=wxw6H1P1Z%2f%2fUNg&pid=ImgRaw&r=0" alt="Cebolla"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img
+                  src="https://th.bing.com/th/id/R.6804b4b6ca1b19ab2a8b36733050f81a?rik=wxw6H1P1Z%2f%2fUNg&pid=ImgRaw&r=0"
+                  alt="Cebolla" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Cebolla (2 unidades)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://tse2.mm.bing.net/th/id/OIP.UV7HY3J4FRyds1bbgVeKNgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Pimientos"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://tse2.mm.bing.net/th/id/OIP.UV7HY3J4FRyds1bbgVeKNgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+                  alt="Pimientos" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Pimientos (3 unidades)</span>
               </div>
 
               <div class="flex items-center">
-                <img src="https://cocinista.b-cdn.net/download/bancorecursos/recetas/receta-arroz-glutinoso-vapor.jpg" alt="Arroz integral"
-                  class="w-10 h-10 rounded-md mr-3 object-cover" />
+                <img src="https://cocinista.b-cdn.net/download/bancorecursos/recetas/receta-arroz-glutinoso-vapor.jpg"
+                  alt="Arroz integral" class="w-10 h-10 rounded-md mr-3 object-cover" />
                 <div class="custom-checkbox mr-3" data-checked="false"></div>
                 <span class="text-gray-700">Arroz integral (1kg)</span>
               </div>
