@@ -242,6 +242,7 @@
         <i class="fas fa-utensils text-green-500 text-2xl mr-2"></i>
         <h1 class="text-xl font-bold text-gray-800">MealPlanner Pro</h1>
       </div>
+
       <div class="hidden md:block">
         <nav class="flex space-x-8">
           <a href="javascript:void(0)" class="tab active text-gray-800 font-medium" data-tab="canasta">Canasta</a>
@@ -250,6 +251,7 @@
           <a href="javascript:void(0)" class="tab text-gray-500" data-tab="estadisticas">Estadísticas</a>
         </nav>
       </div>
+
       <button id="openModalBtn" class="text-gray-700">
         <i class="fas fa-user-circle text-2xl md:text-3xl"></i>
       </button>
@@ -259,62 +261,82 @@
   <!-- Modal de Registro -->
   <div id="registerModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-800">Registro</h2>
         <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">&times;</button>
       </div>
-      <form class="space-y-4">
+
+      <!-- FORMULARIO CORREGIDO -->
+      <form id="registroForm" class="space-y-4">
+
         <div>
           <label class="block text-gray-700">Nombre</label>
-          <input type="text" class="w-full border rounded px-3 py-2" placeholder="Tu nombre">
+          <input name="nombre" type="text" class="w-full border rounded px-3 py-2" placeholder="Tu nombre" required>
         </div>
+
         <div>
           <label class="block text-gray-700">Apellido</label>
-          <input type="text" class="w-full border rounded px-3 py-2" placeholder="Tu apellido">
+          <input name="apellido" type="text" class="w-full border rounded px-3 py-2" placeholder="Tu apellido" required>
         </div>
+
         <div>
           <label class="block text-gray-700">Correo</label>
-          <input type="email" class="w-full border rounded px-3 py-2" placeholder="ejemplo@correo.com">
+          <input name="correo" type="email" class="w-full border rounded px-3 py-2" placeholder="ejemplo@correo.com"
+            required>
         </div>
+
         <div>
           <label class="block text-gray-700">Usuario</label>
-          <input type="text" class="w-full border rounded px-3 py-2" placeholder="Nombre de usuario">
+          <input name="usuario" type="text" class="w-full border rounded px-3 py-2" placeholder="Nombre de usuario"
+            required>
         </div>
+
         <div>
           <label class="block text-gray-700">Contraseña</label>
-          <input type="password" class="w-full border rounded px-3 py-2" placeholder="********">
+          <input name="contrasena" type="password" class="w-full border rounded px-3 py-2" placeholder="********"
+            required>
         </div>
+
         <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
           Registrarse
         </button>
       </form>
+
     </div>
   </div>
+
   <!-- Script para manejar el envío -->
   <script>
-  const form = document.getElementById('registroForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    const form = document.getElementById('registroForm');
 
-    const data = {
-      nombre: form.querySelector('input[placeholder="Tu nombre"]').value,
-      apellido: form.querySelector('input[placeholder="Tu apellido"]').value,
-      correo: form.querySelector('input[placeholder="ejemplo@correo.com"]').value,
-      usuario: form.querySelector('input[placeholder="Nombre de usuario"]').value,
-      contrasena: form.querySelector('input[placeholder="********"]').value
-    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    // Aquí va tu fetch:
-    const response = await fetch("http://localhost/saludable/registro.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      const data = {
+        nombre: form.nombre.value,
+        apellido: form.apellido.value,
+        correo: form.correo.value,
+        usuario: form.usuario.value,
+        contrasena: form.contrasena.value
+      };
+
+      try {
+        const response = await fetch("http://localhost/saludable/registro.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        alert(result.message || result.error);
+
+      } catch (error) {
+        alert("Error al conectar con el servidor");
+        console.error(error);
+      }
     });
-
-    const result = await response.json();
-    alert(result.message || result.error);
-  });
-</script>
+  </script>
 
   <!-- Script para abrir/cerrar modal -->
   <script>
@@ -330,13 +352,13 @@
       registerModal.classList.add('hidden');
     });
 
-    // Cerrar modal al hacer clic fuera del contenido
     registerModal.addEventListener('click', (e) => {
       if (e.target === registerModal) {
         registerModal.classList.add('hidden');
       }
     });
   </script>
+
 
 
 
