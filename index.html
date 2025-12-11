@@ -319,7 +319,7 @@
     };
 
     try {
-      const response = await fetch("/saludable/registro.php", {
+      const response = await fetch("http://localhost/saludable/registro.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
